@@ -8,15 +8,49 @@ import {
   Dimensions,
   Image,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { fetchRegister } from '../js/fetchRegister'; // Importando a função fetchRegister
 
 const { width, height } = Dimensions.get('window');
 
 export default function Cadastre({ navigation }) {
-  const [data, setData] = useState('');
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+
+  const handleRegister = async () => {
+    if (!nome || !email || !senha || !confirmarSenha || !dataNascimento) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+      return;
+    }
+  
+    if (senha !== confirmarSenha) {
+      Alert.alert('Erro', 'As senhas não coincidem.');
+      return;
+    }
+  
+    try {
+      const response = await fetchRegister(nome, email, senha, confirmarSenha, dataNascimento);
+  
+      if (response) {
+        console.log('Usuário registrado:', response);
+        Alert.alert('Sucesso', 'Conta criada com sucesso!');
+        navigation.navigate('login'); // Navegar para a tela de login apenas se o registro for bem-sucedido
+      } else {
+        Alert.alert('Erro', 'Erro ao registrar o usuário. Tente novamente.');
+        return;
+      }
+    } catch (error) {
+      console.error('Erro ao registrar:', error);
+      Alert.alert('Erro', 'Erro ao conectar ao servidor. Tente novamente mais tarde.');
+    }
+  };
 
   const handleChange = (text) => {
     let value = text.replace(/\D/g, '');
@@ -26,15 +60,15 @@ export default function Cadastre({ navigation }) {
     } else if (value.length > 2) {
       value = value.replace(/(\d{2})(\d{2})/, '$1/$2');
     }
-    setData(value);
+    setDataNascimento(value);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <LinearGradient
-                  colors={['#070C18', '#213975']}
-                  style={styles.innerContainer}
-                >
+        colors={['#070C18', '#213975']}
+        style={styles.innerContainer}
+      >
         <Image
           source={require('../../assets/icons/logo.png')}
           style={styles.logo}
@@ -45,22 +79,38 @@ export default function Cadastre({ navigation }) {
 
         <View style={styles.inputContainer}>
           <Ionicons name="person-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Digite seu nome" placeholderTextColor="#ccc" style={styles.input} />
+          <TextInput
+            placeholder="Digite seu nome"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            value={nome}
+            onChangeText={setNome}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Digite seu email" placeholderTextColor="#ccc" style={styles.input} keyboardType="email-address" />
+          <TextInput
+            placeholder="Digite seu email"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Ionicons name="calendar-outline" size={25} color="#ccc" style={styles.icon} />
           <TextInput
             style={styles.input}
-            value={data}
-            onChangeText={handleChange}
+            value={dataNascimento}
+            onChangeText={(text) => {
+              setDataNascimento(text);
+              handleChange(text);
+            }}
             keyboardType="numeric"
-            maxLength={10}
+            maxLength={10}    
             placeholder="Data de Nascimento"
             placeholderTextColor="#ccc"
           />
@@ -68,15 +118,29 @@ export default function Cadastre({ navigation }) {
 
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Senha" placeholderTextColor="#ccc" style={styles.input} secureTextEntry />
+          <TextInput
+            placeholder="Senha"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Confirme sua senha" placeholderTextColor="#ccc" style={styles.input} secureTextEntry />
+          <TextInput
+            placeholder="Confirme sua senha"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={confirmarSenha}
+            onChangeText={setConfirmarSenha}
+          />
         </View>
 
-        <TouchableOpacity style={styles.primaryButton}>
+        <TouchableOpacity style={styles.primaryButton} onPress={handleRegister}>
           <Text style={styles.primaryText}>Criar conta</Text>
         </TouchableOpacity>
 
@@ -88,7 +152,6 @@ export default function Cadastre({ navigation }) {
             Já tem uma conta? <Text style={styles.link}>Entrar</Text>
           </Text>
         </TouchableOpacity>
-
       </LinearGradient>
     </TouchableWithoutFeedback>
   );

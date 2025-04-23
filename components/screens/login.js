@@ -8,25 +8,35 @@ import {
   Dimensions,
   Image,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { loginUser } from '../js/fetchLogin'; // Importa a função de login
 
 const { width, height } = Dimensions.get('window');
 
 export default function PreLogin({ navigation }) {
-  const [data, setData] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
-  const handleChange = (text) => {
-    let value = text.replace(/\D/g, '');
-
-    if (value.length > 4) {
-      value = value.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
-    } else if (value.length > 2) {
-      value = value.replace(/(\d{2})(\d{2})/, '$1/$2');
+  const handleLogin = async () => {
+    if (!email || !senha) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+      return;
     }
-    setData(value);
+
+    try {
+      const response = await loginUser(email, senha);
+      if (response) {
+        console.log('Login bem-sucedido:', response);
+        Alert.alert('Sucesso', 'Bem-vindo de volta!');
+        navigation.navigate('questionnaire'); // Redireciona para a próxima tela após login bem-sucedido
+      }
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
   };
 
   return (
@@ -44,20 +54,34 @@ export default function PreLogin({ navigation }) {
         <Text style={styles.subtitle}>Entre e continue cuidando da sua mente</Text>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="person-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Digite seu nome" placeholderTextColor="#ccc" style={styles.input} />
+          <Ionicons name="mail-outline" size={25} color="#ccc" style={styles.icon} />
+          <TextInput
+            placeholder="Digite seu email"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
-          <TextInput placeholder="Senha" placeholderTextColor="#ccc" style={styles.input} secureTextEntry />
+          <TextInput
+            placeholder="Senha"
+            placeholderTextColor="#ccc"
+            style={styles.input}
+            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+          />
         </View>
 
         <TouchableOpacity onPress={() => navigation.navigate('verification')}>
           <Text style={styles.bottompassword}>Esqueci minha senha</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('questionnaire')} style={styles.primaryButton}>
+        <TouchableOpacity onPress={handleLogin} style={styles.primaryButton}>
           <Text style={styles.primaryText}>Fazer login</Text>
         </TouchableOpacity>
 
@@ -87,7 +111,7 @@ const styles = StyleSheet.create({
     height: width * 0.18,
     resizeMode: 'contain',
     marginBottom: height * 0.03,
-    marginTop: height * 0.1
+    marginTop: height * 0.1,
   },
   title: {
     marginBottom: height * 0.01,
@@ -102,13 +126,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: height * 0.06,
   },
-  bottompassword:{
+  bottompassword: {
     marginRight: width * 0.45,
     color: '#ccc',
     marginTop: height * 0.0,
     fontSize: width * 0.035,
     paddingBottom: height * 0.03,
-    
   },
   inputContainer: {
     flexDirection: 'row',
@@ -128,7 +151,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: 'white',
-    
   },
   primaryButton: {
     backgroundColor: '#2E5BFF',
