@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Octicons from '@expo/vector-icons/Octicons';
 import {
   View,
   Text,
@@ -54,7 +56,7 @@ export default function PreLogin({ navigation }) {
         <Text style={styles.subtitle}>Entre e continue cuidando da sua mente</Text>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={25} color="#ccc" style={styles.icon} />
+          <FontAwesome6 name="circle-user" size={24} style={styles.icon} color="white" />
           <TextInput
             placeholder="Digite seu email"
             placeholderTextColor="#ccc"
@@ -66,7 +68,7 @@ export default function PreLogin({ navigation }) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
+          <Octicons name="lock" size={24} color="white" style={styles.icon} />
           <TextInput
             placeholder="Senha"
             placeholderTextColor="#ccc"
@@ -132,6 +134,7 @@ const styles = StyleSheet.create({
     marginTop: height * 0.0,
     fontSize: width * 0.035,
     paddingBottom: height * 0.03,
+    fontWeight: 'bold',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#29374F',
     borderWidth: 1,
     borderColor: '#2544F4',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingHorizontal: width * 0.04,
     width: width * 0.851,
     height: height * 0.069,
@@ -151,6 +154,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: 'white',
+    fontWeight: 'bold',
   },
   primaryButton: {
     backgroundColor: '#2E5BFF',

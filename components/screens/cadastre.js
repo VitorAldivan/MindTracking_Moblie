@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Octicons from '@expo/vector-icons/Octicons';
 import {
   View,
   Text,
@@ -23,20 +25,27 @@ export default function Cadastre({ navigation }) {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
+  
+  const formatarDataParaEnvio = (data) => {
+    const [dia, mes, ano] = data.split('/');
+    return `${ano}-${mes}-${dia}`; // Converte para AAAA-MM-DD
+  };
 
   const handleRegister = async () => {
     if (!nome || !email || !senha || !confirmarSenha || !dataNascimento) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos.');
       return;
     }
-  
+    
     if (senha !== confirmarSenha) {
       Alert.alert('Erro', 'As senhas não coincidem.');
       return;
     }
   
+    const dataFormatada = formatarDataParaEnvio(dataNascimento); // Formata a data para envio
+  
     try {
-      const response = await fetchRegister(nome, email, senha, confirmarSenha, dataNascimento);
+      const response = await fetchRegister(nome, email, senha, confirmarSenha, dataFormatada);
   
       if (response) {
         console.log('Usuário registrado:', response);
@@ -78,7 +87,7 @@ export default function Cadastre({ navigation }) {
         <Text style={styles.subtitle}>Sua jornada rumo ao equilíbrio emocional começa aqui</Text>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="person-outline" size={25} color="#ccc" style={styles.icon} />
+        <FontAwesome6 name="circle-user" size={24} style={styles.icon} color="white" />
           <TextInput
             placeholder="Digite seu nome"
             placeholderTextColor="#ccc"
@@ -89,7 +98,7 @@ export default function Cadastre({ navigation }) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={25} color="#ccc" style={styles.icon} />
+          <Octicons name="mail" size={24} color="white" style={styles.icon} />
           <TextInput
             placeholder="Digite seu email"
             placeholderTextColor="#ccc"
@@ -101,7 +110,7 @@ export default function Cadastre({ navigation }) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="calendar-outline" size={25} color="#ccc" style={styles.icon} />
+        <Octicons name="calendar" size={24} color="white" style={styles.icon} />
           <TextInput
             style={styles.input}
             value={dataNascimento}
@@ -117,7 +126,7 @@ export default function Cadastre({ navigation }) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
+        <Octicons name="lock" size={24} color="white" style={styles.icon} />
           <TextInput
             placeholder="Senha"
             placeholderTextColor="#ccc"
@@ -129,7 +138,7 @@ export default function Cadastre({ navigation }) {
         </View>
 
         <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={25} color="#ccc" style={styles.icon} />
+        <Octicons name="lock" size={24} color="white" style={styles.icon} />
           <TextInput
             placeholder="Confirme sua senha"
             placeholderTextColor="#ccc"
@@ -195,7 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#29374F',
     borderWidth: 1,
     borderColor: '#2544F4',
-    borderRadius: 25,
+    borderRadius: 50,
     paddingHorizontal: width * 0.04,
     width: width * 0.851,
     height: height * 0.069,
@@ -207,6 +216,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: 'white',
+    fontWeight: 'bold',
   },
   primaryButton: {
     backgroundColor: '#2E5BFF',
